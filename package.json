@@ -1,0 +1,22 @@
+{
+  "name": "ssb-electroparty",
+  "version": "1.0.0",
+  "productName": "SSB Electroparty",
+  "description": "Minimal sbot-in-electron setup",
+  "main": "index.js",
+  "scripts": {
+    "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
+    "start": "electron index.js client.js -- --title electroparty",
+    "pack": "electron-packager . --overwrite"
+  },
+  "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes)",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-script": "^1.0.5",
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.1"
+  },
+  "dependencies": {
+    "electro": "^2.0.3"
+  }
+}

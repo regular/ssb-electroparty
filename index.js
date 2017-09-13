@@ -1,4 +1,6 @@
 const path = require('path')
+const child_process = require('child_process')
+
 console.log(process.version)
 
 // if we are run by electron, the first argument is the path to the electron executable
@@ -17,6 +19,12 @@ if (process.argv.length<3) {
   console.log('adding default argument')
   process.argv.push(`${__dirname}/client.js`)
 }
+
+const sbot = child_process.fork(require.resolve('scuttlebot/bin.js'), ['server'])
+sbot.on('close', (code) => {
+  console.log(`sbot process exited with code ${code}`);
+})
+
 console.log('loading electro')
 require('electro')
 

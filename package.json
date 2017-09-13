@@ -7,7 +7,7 @@
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
     "start": "electron index.js client.js -- --title electroparty",
-    "pack": "electron-packager . --overwrite"
+    "pack": "electron-packager . --out build --overwrite"
   },
   "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes)",
   "license": "MIT",

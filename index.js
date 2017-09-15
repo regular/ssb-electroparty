@@ -22,7 +22,15 @@ if (process.argv.length<3) {
 }
 
 const electro = require('./electro')
-party(electro.opts, (err, ssb, config) => {
+
+let cannedOpts = {}
+try {
+  cannedOpts = JSON.parse(fs.readFileSync(__dirname + path.sep + "config"))
+} catch(e) {
+  console.error('Unable to read canned options from config file:' + e.message)
+}
+
+party(Object.assign({}, cannedOpts, electro.opts), (err, ssb, config) => {
   if (err) return console.error(err)
   //console.log('sbot config', config)
   const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const party = require('ssb-party')
+const ssbKeys = require('ssb-keys')
 
 console.log(`Node version: ${process.version}`)
 
@@ -21,14 +22,16 @@ if (process.argv.length<3) {
 }
 
 const electro = require('./electro')
-party( (err, ssb, config) => {
+party(electro.opts, (err, ssb, config) => {
   if (err) return console.error(err)
   //console.log('sbot config', config)
   const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
-  ssb.ws.getAddress( (err, wsaddress)=>{
+  const keys = config.keys || (config.keys =
+    ssbKeys.loadOrCreateSync(path.join(config.path, 'secret')))
+  ssb.ws.getAddress( (err, wsAddress)=>{
     if (err) return console.error(err)
-    console.log('ws address', wsaddress)
-    electro(null, {manifest, config, wsaddress})
+    config.wsAddress = wsAddress
+    electro(null, {manifest, sbotConfig: config})
   })
 })
 

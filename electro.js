@@ -55,10 +55,10 @@ app.on('ready', function next () {
 })
 
 module.exports = done()
+module.exports.opts = opts
 
 done(function(err, results) {
   if (err) return console.error(err)
-  console.log(results)
   let config = results[1]
   console.log('loading index.html')
   mainWindow.loadURL('file://' + path.join(__dirname, 'index.html') + '?' +

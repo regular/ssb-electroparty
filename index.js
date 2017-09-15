@@ -25,6 +25,10 @@ party( (err, ssb, config) => {
   if (err) return console.error(err)
   //console.log('sbot config', config)
   const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
-  electro(null, {manifest, config})
+  ssb.ws.getAddress( (err, wsaddress)=>{
+    if (err) return console.error(err)
+    console.log('ws address', wsaddress)
+    electro(null, {manifest, config, wsaddress})
+  })
 })
 

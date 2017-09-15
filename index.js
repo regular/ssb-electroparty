@@ -1,7 +1,8 @@
+const fs = require('fs')
 const path = require('path')
-const child_process = require('child_process')
+const party = require('ssb-party')
 
-console.log(process.version)
+console.log(`Node version: ${process.version}`)
 
 // if we are run by electron, the first argument is the path to the electron executable
 // and the 2nd arg is our filename (index,js)
@@ -10,21 +11,20 @@ console.log(process.version)
 //
 if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
   process.argv = [process.argv[0]].concat([`${__dirname}/index.js`]).concat(process.argv.slice(1))
-
 }
 
-console.log('fixed argv', process.argv)
+//console.log('fixed argv', process.argv)
 
 if (process.argv.length<3) {
   console.log('adding default argument')
   process.argv.push(`${__dirname}/client.js`)
 }
 
-const sbot = child_process.fork(require.resolve('scuttlebot/bin.js'), ['server'])
-sbot.on('close', (code) => {
-  console.log(`sbot process exited with code ${code}`);
+const electro = require('./electro')
+party( (err, ssb, config) => {
+  if (err) return console.error(err)
+  //console.log('sbot config', config)
+  const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
+  electro(null, {manifest, config})
 })
-
-console.log('loading electro')
-require('electro')
 

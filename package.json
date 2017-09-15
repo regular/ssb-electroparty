@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "electro": "^2.0.3",
+    "multicb": "^1.2.2",
     "scuttlebot": "^10.4.4",
     "ssb-client": "^4.5.1",
     "ssb-party": "^0.5.1"

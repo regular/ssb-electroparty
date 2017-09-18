@@ -12,6 +12,18 @@ console.log(`Node version: ${process.version}`)
 // application's path and our index.js does not appear in the argv array
 //
 if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
+  
+  // is this an attempt to run sbot?
+  if (process.argv[1]) {
+    let s = process.argv[1].split(path.sep)
+    if (s.length>2) {
+      s = s.slice(-2)
+      if (s[0] === 'ssb-party') {
+        return require(process.argv[1])
+      }
+    }
+  }
+
   process.argv = [process.argv[0]].concat([`${__dirname}/index.js`]).concat(process.argv.slice(1))
 }
 

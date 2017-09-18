@@ -1,6 +1,7 @@
 const path = require('path')
 const ssbClient = require('ssb-client')
 const pull = require('pull-stream')
+const onboarding = require('./onboarding')
 
 let pre = document.createElement('pre')
 document.body.appendChild(pre)
@@ -52,6 +53,10 @@ module.exports = function({keys, sbotConfig, manifest}) {
           if (err) return print(err)
           if (Object.values(requiredMsgTypes).includes(false)) {
             print('Needs onboarding')
+            onboarding(ssb, print, requiredMsgTypes, (err) => {
+              if (err) return print(`Onboarding failed: ${err.message}`)
+              print('Onboarding successful!')
+            })
           } else {
             print('Does not need onboarding')
           }

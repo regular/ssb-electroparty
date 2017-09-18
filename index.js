@@ -44,8 +44,14 @@ electro.openWindow(opts, (err, mainWindow)=>{
     
     party(opts, (err, ssb, config) => {
       if (err) return console.error(err)
-      //console.log('sbot config', config)
       const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
+      const configPath = `${config.path + path.sep}config`
+      const hasConfig = fs.existsSync(configPath)
+      console.log('has config', hasConfig)
+      if (!hasConfig) {
+        console.log('Writing config to', configPath)
+        fs.writeFileSync(configPath, JSON.stringify(config), 'utf-8')
+      }
 
       ssb.ws.getAddress( (err, wsAddress)=>{
         if (err) return console.error(err)

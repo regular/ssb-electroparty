@@ -1,8 +1,6 @@
-document.write('hello world')
-process.stdout.write('hello world\n')
-
-const ssbClient = require('ssb-client')
 const path = require('path')
+const ssbClient = require('ssb-client')
+const pull = require('pull-stream')
 
 let pre = document.createElement('pre')
 document.body.appendChild(pre)
@@ -25,12 +23,40 @@ module.exports = function({keys, sbotConfig, manifest}) {
     timers: {handshake: 30000},
     manifest: manifest
   }, (err, ssb) => {
-    print(`err: ${err}`)
-    if (err) return
     ssb.whoami( (err, feed) => {
-      print(`err: ${err}`)
-      if (err) return
+      if (err) return print(err.message)
       print(`your sbot's pubkey: ${feed.id}`)
+
+      let requiredMsgTypes = {
+        about: false,
+        pub: false,
+        contact: false
+      }
+
+      let drain
+      pull(
+        ssb.createHistoryStream({id: feed.id}),
+        pull.filter( kv => {
+          let t = kv.value.content && kv.value.content.type
+          if (Object.keys(requiredMsgTypes).includes(t) && requiredMsgTypes[t] === false) {
+            if (t === 'contact' && kv.value.content.autofollow) return false
+            requiredMsgTypes[t] = kv.value.sequence
+            print(`Found ${t} message with sequence number ${kv.value.sequence}`)
+            if (!Object.values(requiredMsgTypes).includes(false)) drain.abort()
+            return true
+          }
+          return false
+        }),
+        drain = pull.drain( kv => {
+        }, err => {
+          if (err) return print(err)
+          if (Object.values(requiredMsgTypes).includes(false)) {
+            print('Needs onboarding')
+          } else {
+            print('Does not need onboarding')
+          }
+        })
+      )
     })
   })
 }

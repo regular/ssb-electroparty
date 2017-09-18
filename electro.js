@@ -1,71 +1,84 @@
-var path = require('path')
-var multicb = require('multicb')
-var done = multicb({ pluck: 1 })
+const path = require('path')
+const qs = require('querystring')
+const Obv = require('obv')
 
-var argv = [], _argv = []
+var argv = []
+function processArgv() {
+  var _argv = []
 
-var i = process.argv.indexOf('--')
+  var i = process.argv.indexOf('--')
 
-if(~i) {
-  argv = process.argv.slice(2, i)
-  _argv = process.argv.slice(i + 1)
+  if(~i) {
+    argv = process.argv.slice(2, i)
+    _argv = process.argv.slice(i + 1)
+  }
+  else
+    argv = process.argv.slice(2)
+
+  var opts = require('minimist')(_argv)
+  argv.unshift('electroparty')
+  return opts
 }
-else
-  argv = process.argv.slice(2)
 
-var opts = require('minimist')(_argv)
-
-argv.unshift('electro')
-
-var electron = require('electron')
-var app = electron.app;  // Module to control application life.
-var BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is GCed.
 var mainWindow = null;
+var electron = require('electron')
+var BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+let ready = Obv()
+var app = electron.app;  // Module to control application life.
+app.on('ready', () => ready.set(true) )
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-  app.quit();
-});
+function openWindow(opts, cb) {
+  console.log('Waiting for ready')
+  ready.once( ()=> {
+    console.log('electron ready')
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
+    app.on('window-all-closed', function() {
+      app.quit();
+    });
 
-process.removeAllListeners('uncaughtException')
-process.removeAllListeners('exit')
+    process.removeAllListeners('uncaughtException')
+    process.removeAllListeners('exit')
 
-process.stdin.pause()
+    process.stdin.pause()
 
-var qs = require('querystring')
-var ready = done()
-var proc = { argv: argv }
+    mainWindow = new BrowserWindow(opts)
 
-app.on('ready', function next () {
-  // Create the browser window.
-//  opts.preload = path.join(__dirname, 'preload.js')
-  mainWindow = new BrowserWindow(opts);
+    mainWindow.webContents.on('new-window', function (e, url) {
+      // open in the browser
+      e.preventDefault()
+      shell.openExternal(url)
+    })
 
+    if (opts.dev) {
+      mainWindow.webContents.openDevTools()
+    }
+      
+    mainWindow.on('closed', function() {
+      // Dereference the window object, usually you would store windows
+      // in an array if your app supports multi windows, this is the time
+      // when you should delete the corresponding element.
+      mainWindow = null;
+    })
+
+    cb(null, mainWindow)
+  })
+}
+
+function loadWebContent(filename, cb) {
+  console.log(`loading ${filename} ...`)
+
+  var proc = { argv: argv }
   proc.stdin = process.stdin.isTTY
   proc.stderr = process.stderr.isTTY
   proc.stdout = process.stdout.isTTY
 
-  // and load the index.html of the app.
-  ready(null)
-})
+  console.log('proc', proc)
 
-module.exports = done()
-module.exports.opts = opts
-
-done(function(err, results) {
-  if (err) return console.error(err)
-  let config = results[1]
-  console.log('loading index.html')
-  mainWindow.loadURL('file://' + path.join(__dirname, 'index.html') + '?' +
+  mainWindow.loadURL('file://' + path.join(__dirname, filename) + '?' +
   encodeURIComponent(qs.stringify(proc)));
-//  require('assert').deepEqual(qs.parse(qs.stringify(proc)), proc)
 
-  
   mainWindow.webContents.on('dom-ready', function () {
     console.log('dom ready')
     process.stdin
@@ -77,7 +90,7 @@ done(function(err, results) {
       })
       .resume()
 
-    var ipc = electron.ipcMain //require('ipc')
+    var ipc = electron.ipcMain
     ipc.on('process.stdout', function (s, data) {
       process.stdout.write(new Buffer(data, 'base64'))
     })
@@ -85,27 +98,13 @@ done(function(err, results) {
     ipc.on('process.stderr', function (s, data) {
       process.stderr.write(new Buffer(data, 'base64'))
     })
-
-    console.log('SENDING CONFIG')
-    mainWindow.send('sbot.config', JSON.stringify(config))
+    cb(null)
   })
 
-  mainWindow.webContents.on('new-window', function (e, url) {
-    // open in the browser
-    e.preventDefault()
-    shell.openExternal(url)
-  })
+}
 
-  // Open the devtools.
-  if(opts.dev)
-    mainWindow.webContents.openDevTools();
-    
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-})
-
+module.exports = {
+  processArgv,
+  openWindow,
+  loadWebContent
+}

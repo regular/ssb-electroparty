@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
-    "start": "electron index.js client.js -- --title electroparty",
+    "start": "electron index.js client.js  -- --dev --title electroparty",
     "pack": "electron-packager . --out build --overwrite",
     "pack-all": "electron-packager . --all --out build --overwrite"
   },

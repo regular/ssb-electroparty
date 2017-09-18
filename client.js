@@ -14,8 +14,13 @@ function print(s) {
 
 module.exports = function({sbotConfig, manifest}) {
   //print(JSON.stringify(sbotConfig, null, 2))
+  print(`argv: ${process.argv.join(' ')}`)
+  print(`appName: ${sbotConfig.appName}`)
+  print(`product name: ${sbotConfig.productName}`)
   print(`network key: ${sbotConfig.caps.shs}`)
-  ssbClient(sbotConfig.keys, {
+  let keys = sbotConfig.keys
+  delete sbotConfig.keys
+  ssbClient(keys, {
     caps: sbotConfig.caps,
     remote: sbotConfig.wsAddress,
     timers: {handshake: 30000},

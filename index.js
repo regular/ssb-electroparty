@@ -31,24 +31,27 @@ try {
 
 opts = Object.assign({}, cannedOpts, opts)
 
-console.log('Options', opts)
 
-party(opts, (err, ssb, config) => {
+electro.openWindow(opts, (err, mainWindow)=>{
   if (err) return console.error(err)
-  //console.log('sbot config', config)
-  const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
-  const keys = config.keys || (config.keys =
-    ssbKeys.loadOrCreateSync(path.join(config.path, 'secret')))
-  ssb.ws.getAddress( (err, wsAddress)=>{
-    if (err) return console.error(err)
-    config.wsAddress = wsAddress
-    console.log('Sbot config', config)
+  const {ipcMain} = require('electron')
+  ipcMain.on('pubkey', function (s, browserKey) {
+    console.log('Pubkey in browser', browserKey)
+    opts.master = opts.master || []
+    opts.master.push(`@${browserKey}`)
 
-    console.log('Opening window')
-    electro.openWindow(opts, (err, mainWindow)=>{
+    console.log('Options', opts)
+    
+    party(opts, (err, ssb, config) => {
       if (err) return console.error(err)
-      electro.loadWebContent('index.html', (err) => {
+      //console.log('sbot config', config)
+      const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
+
+      ssb.ws.getAddress( (err, wsAddress)=>{
         if (err) return console.error(err)
+        config.wsAddress = wsAddress
+        console.log('Sbot config', config)
+
         console.log('Sending config ...')
         mainWindow.send('sbot.config', JSON.stringify({
           manifest, 
@@ -57,5 +60,8 @@ party(opts, (err, ssb, config) => {
       })
     })
   })
-})
 
+  electro.loadWebContent('index.html', (err) => {
+    if (err) return console.error(err)
+  })
+})

@@ -12,14 +12,13 @@ function print(s) {
   process.stdout.write(s + '\n')
 }
 
-module.exports = function({sbotConfig, manifest}) {
+module.exports = function({keys, sbotConfig, manifest}) {
   //print(JSON.stringify(sbotConfig, null, 2))
   print(`argv: ${process.argv.join(' ')}`)
   print(`appName: ${sbotConfig.appName}`)
   print(`product name: ${sbotConfig.productName}`)
   print(`network key: ${sbotConfig.caps.shs}`)
-  let keys = sbotConfig.keys
-  delete sbotConfig.keys
+  print(`browser pubkey: ${keys.public}`)
   ssbClient(keys, {
     caps: sbotConfig.caps,
     remote: sbotConfig.wsAddress,
@@ -31,7 +30,7 @@ module.exports = function({sbotConfig, manifest}) {
     ssb.whoami( (err, feed) => {
       print(`err: ${err}`)
       if (err) return
-      print(`your pubkey: ${feed.id}`)
+      print(`your sbot's pubkey: ${feed.id}`)
     })
   })
 }

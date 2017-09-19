@@ -5,7 +5,7 @@ Minimal(ish) sbot-in-electron setup
 
 > NOTE: this needs a patched version of ssb-party currently
 
-Electroparty is a meshup of [electro](https://www.npmjs.com/package/electro) and [ssb-party](https://www.npmjs.com/package/ssb-party).
+Electroparty is a mashup of [electro](https://www.npmjs.com/package/electro) and [ssb-party](https://www.npmjs.com/package/ssb-party).
 It is meant as a base for your next great SSB desktop client packed as an electron app. Additionally, it provides you with ways to deploy your client directly on ssb, so your users don't need to download anything from the centralised Internet to get updates of your ssb client! (if they already have Electroparty installed, the entire installation process does not need a traditional download-and-install ceremony at all - we can deploy sbb clients using our own app store kind of UI. Applications are indexhtmlified and packed into ssb blobs!)
 
 Instead of bundling and controlling the lifetime of sbot (like patchwork does), electroparty checks whether an instance of sbot is already running and spawns one, if needed (like patchfoo does). The sbot instance runs in a headless electron process, no node is needed on the target machine. The sbot instnace outlivees your client. (it's a detached process) See ssb-party for details. You can stop an sbot instance started this way with `./sbot control.stop`. It automatically shutsdown after a configuratable idle time.
@@ -41,7 +41,7 @@ If one or more of these messages is not found, the missing ones are published us
   }
 ```
 
-> Embedding an invite code and the name of the (future) ssb feed into the config file (and therefore into the Application's binary) allows for an invite-by-email scenario: A user of your client wants to invite a friend to the network. They enter the friend's email address and name into a form. On the download-server/pub an invite code is created for this user and put into a config file, along with that friends's name and the feedid of the inviting user. An email is sent out to the friend containing a download URL that encodes that config file's data (new user's name, invite code, inviring user's feedid). If that link is clicked, a customized Zipfile is created (replacing files in a zip is much faster than repacking the entire application). If the new user runs the application, they will automatically accpet the invite code, follow their friend and post an about message with their name!
+> Embedding an invite code and the name of the (future) ssb feed into the config file (and therefore into the application's binary) allows for an invite-by-email scenario: A user of your client wants to invite a friend to the network. They enter the friend's email address and name into a form. On the download-server/pub an invite code is created for this user and put into a config file, along with that friends's name and the feedid of the inviting user. An email is sent out to the friend containing a download URL that encodes that config file's data (new user's name, invite code, inviting user's feedid). If that link is clicked, a customized zipfile is created (replacing files in a zip is much faster than repacking the entire application). If the new user runs the application, they will automatically accpet the invite code, follow their friend and post an about message with their name. (or rather be presented with an input field pre-filled with their name or something similar)
 
 ## 2. Bootloading
 

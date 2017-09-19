@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "budo": "^10.0.4",
+    "deep-extend": "^0.5.0",
     "electro": "^2.0.3",
     "pull-many": "^1.0.8",
     "scuttlebot": "^10.4.4",

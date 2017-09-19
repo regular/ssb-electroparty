@@ -16,6 +16,9 @@
   "timers": {
     "handshake": 30000
   },
+  "master": [
+    "@ZovWuWbQeHbyxHZZwgWhEl3T445yZke3QKn9/8UTzBo=.ed25519"
+  ],
   "cms": {
     "root": "%Qmxp+xUtreDtsXk3E8cN05EoJ+dvRztfkdnOiAfGfmc=.sha256"
   },
@@ -28,6 +31,6 @@
     ]
   },
   "bootloader": {
-    "codeMessage": "%niZhLjGpc4DmZwcK78wscentpyRSclrlv4+1MzSlNDw=.sha256"
+    "codeMessage": "%bWA9jD9K9vrvgJb5DDW/58Kj5FpLMfXLW4/+gpVpQfM=.sha256"
   }
 }

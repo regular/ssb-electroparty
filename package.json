@@ -6,11 +6,12 @@
   "main": "index.js",
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
-    "build": "browserify -x electron -x stream -x querystring -x path --insert-global-vars __filenme,__dirname --ignore-missing browser.js | indexhtmlify > index.html",
+    "build": "browserify -x electron -x stream -x querystring -x path --insert-global-vars __filenme,__dirname --ignore-missing browser.js | indexhtmlify > electroparty.html",
     "start": "electron index.js client.js  -- --dev --title electroparty",
     "pack": "electron-packager . --out build --overwrite",
     "pack-all": "electron-packager . --all --out build --overwrite",
-    "deploy-client": "./sbot publish --type client-update --code \"`browserify $src | indexhtmlify | metadataify | ./sbot blobs.add`\""
+    "deploy-client": "./sbot publish --type client-update --code \"`browserify dummy-client.js | indexhtmlify | metadataify | ./sbot blobs.add`\"",
+    "dev-client": "config_hash=\"`./url-config-hash`\" budo dummy-client.js -- -t envify"
   },
   "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes)",
   "license": "MIT",
@@ -19,10 +20,12 @@
     "cross-script": "^1.0.5",
     "electron": "^1.7.6",
     "electron-packager": "^9.0.1",
+    "envify": "^4.1.0",
     "indexhtmlify": "^1.3.1",
     "metadataify": "^2.0.0"
   },
   "dependencies": {
+    "budo": "^10.0.4",
     "electro": "^2.0.3",
     "pull-many": "^1.0.8",
     "scuttlebot": "^10.4.4",

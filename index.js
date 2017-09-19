@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const party = require('ssb-party')
 const ssbKeys = require('ssb-keys')
+const createConfig = require('ssb-config/inject')
 const electro = require('./electro')
 
 console.log(`Node version: ${process.version}`)
@@ -49,12 +50,14 @@ electro.openWindow(opts, (err, mainWindow)=>{
   const {ipcMain} = require('electron')
   ipcMain.on('pubkey', function (s, browserKey) {
     console.log('Pubkey in browser', browserKey)
-    opts.master = opts.master || []
-    opts.master.push(`@${browserKey}`)
 
     console.log('Options', opts)
-    
-    party(opts, (err, ssb, config) => {
+
+    let partyConfig = createConfig(process.env.ssb_appname || opts.appName, opts)  
+    partyConfig.ignoreConfigfile = true
+    partyConfig.master.push(`@${browserKey}`)
+
+    party(partyConfig, (err, ssb, config) => {
       if (err) return console.error(err)
       const manifest = config.manifest || JSON.parse(fs.readFileSync(config.manifestFile))
       const configPath = `${config.path + path.sep}config`
@@ -89,7 +92,7 @@ electro.openWindow(opts, (err, mainWindow)=>{
     })
   })
 
-  electro.loadWebContent('index.html', (err) => {
+  electro.loadWebContent('electroparty.html', (err) => {
     if (err) return console.error(err)
   })
 })

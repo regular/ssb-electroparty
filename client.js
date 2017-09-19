@@ -1,6 +1,8 @@
 const path = require('path')
 const ssbClient = require('ssb-client')
 const pull = require('pull-stream')
+const querystring = require('querystring')
+
 const onboarding = require('./onboarding')
 const bootloader = require('./bootloader')
 
@@ -72,7 +74,9 @@ module.exports = function({keys, sbotConfig, manifest}) {
           if (err) return print(`Bootloader failed: ${err.message}`)
           const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
           print(`Loading ${url}`)
-          document.location.href = url
+          let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
+          let fragment = querystring.stringify({s:configB64})
+          document.location.href = `${url}#${fragment}`
         })
       }
 

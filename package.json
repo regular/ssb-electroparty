@@ -10,7 +10,7 @@
     "start": "electron index.js bootstrap.js -- --dev --title electroparty",
     "pack": "electron-packager . --out build --overwrite",
     "pack-all": "electron-packager . --all --out build --overwrite",
-    "deploy-client": "./sbot publish --type client-update --code \"`browserify dummy-client.js | indexhtmlify | metadataify | ./sbot blobs.add`\"",
+    "deploy-client": "./sbot publish --type client-update --code \"`browserify dummy-client.js | indexhtmlify | metadataify | ./sbot blobs.add`\" | jsonpath-dl key",
     "dev-client": "config_hash=\"`./url-config-hash`\" budo dummy-client.js -- -t envify"
   },
   "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes)",
@@ -22,6 +22,7 @@
     "electron-packager": "^9.0.1",
     "envify": "^4.1.0",
     "indexhtmlify": "^1.3.1",
+    "jsonpath-dl": "^1.1.1",
     "metadataify": "^2.0.0"
   },
   "dependencies": {

@@ -57,18 +57,16 @@ This is how the bootloader section in `config` looks like:
 
 # npm scripts
 
-`npm run rebuild` -- rebuild native modules for the node runtime bundled with electron
-`npm run build` -- build `electroparty.html` (needed by the other scripts)
-`npm start` -- run index.js and bootstrap.js in electron (depending on your `config` filr , this boots into a client deployed to ssb
-`npm run pack` -- run electron-packager and get distrubitable binary for the platform you are working on
-`npm run pack-all` -- same for all platforms supported by electron-packager (untested)
-`npm run deploy-client` -- browserify and indexhtmlify dummy-client.js and deploy as a blob to ssb
-`npm run dev-client` -- run dummy-client.js in tour browser, for development
+- `npm run rebuild` -- rebuild native modules for the node runtime bundled with electron
+- `npm run build` -- build `electroparty.html` (needed by the other scripts)
+- `npm start` -- run index.js and bootstrap.js in electron (depending on your `config` filr , this boots into a client deployed to ssb
+- `npm run pack` -- run electron-packager and get distrubitable binary for the platform you are working on
+- `npm run pack-all` -- same for all platforms supported by electron-packager (untested)
+- `npm run deploy-client` -- browserify and indexhtmlify dummy-client.js and deploy as a blob to ssb
+- `npm run dev-client` -- run dummy-client.js in tour browser, for development
 
 # Additional properties in config
 
  - `appName`, like the environment variable `ssb_appname`, lets tou specify where sbot looks for its config
 
 There's a script that takes appName form the  `config` file in the current working directory and runs sbot. Example: `./sbot whoami`
-
-# Sbot lifetime

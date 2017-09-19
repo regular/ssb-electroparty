@@ -7,7 +7,7 @@
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
     "build": "browserify -x electron -x stream -x querystring -x path --insert-global-vars __filenme,__dirname --ignore-missing browser.js | indexhtmlify > electroparty.html",
-    "start": "electron index.js client.js  -- --dev --title electroparty",
+    "start": "electron index.js bootstrap.js -- --dev --title electroparty",
     "pack": "electron-packager . --out build --overwrite",
     "pack-all": "electron-packager . --all --out build --overwrite",
     "deploy-client": "./sbot publish --type client-update --code \"`browserify dummy-client.js | indexhtmlify | metadataify | ./sbot blobs.add`\"",

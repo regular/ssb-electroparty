@@ -30,7 +30,7 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
 
 if (process.argv.length<3) {
   console.log('adding default argument')
-  process.argv.push(`${__dirname}/client.js`)
+  process.argv.push(`${__dirname}/bootstrap.js`)
 }
 
 let opts = electro.processArgv()

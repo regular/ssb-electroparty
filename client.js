@@ -2,6 +2,7 @@ const path = require('path')
 const ssbClient = require('ssb-client')
 const pull = require('pull-stream')
 const onboarding = require('./onboarding')
+const bootloader = require('./bootloader')
 
 let pre = document.createElement('pre')
 document.body.appendChild(pre)
@@ -24,6 +25,7 @@ module.exports = function({keys, sbotConfig, manifest}) {
     timers: {handshake: 30000},
     manifest: manifest
   }, (err, ssb) => {
+    if (err) return print(`Failed to connect to sbot from client: ${err.message}`)
     ssb.whoami( (err, feed) => {
       if (err) return print(err.message)
       print(`your sbot's pubkey: ${feed.id}`)
@@ -56,12 +58,24 @@ module.exports = function({keys, sbotConfig, manifest}) {
             onboarding(ssb, print, requiredMsgTypes, (err) => {
               if (err) return print(`Onboarding failed: ${err.message}`)
               print('Onboarding successful!')
+              run()
             })
           } else {
             print('Does not need onboarding')
+            run()
           }
         })
       )
+
+      function run() {
+        bootloader(ssb, print, {keys, sbotConfig, manifest}, (err, codeBlob) => {
+          if (err) return print(`Bootloader failed: ${err.message}`)
+          const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
+          print(`Loading ${url}`)
+          document.location.href = url
+        })
+      }
+
     })
   })
 }

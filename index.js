@@ -62,7 +62,17 @@ electro.openWindow(opts, (err, mainWindow)=>{
       console.log('has config', hasConfig)
       if (!hasConfig) {
         console.log('Writing config to', configPath)
-        fs.writeFileSync(configPath, JSON.stringify(config), 'utf-8')
+        let c = Object.assign({}, config)
+        delete c.master
+        delete c._
+        delete c.path
+        delete c.appName
+        delete c.productName
+        delete c.onboarding
+        delete c.title
+        delete c.dev
+        delete c.manifestFile
+        fs.writeFileSync(configPath, JSON.stringify(c, null, 2), 'utf-8')
       }
 
       ssb.ws.getAddress( (err, wsAddress)=>{

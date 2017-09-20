@@ -17,7 +17,8 @@
     "handshake": 30000
   },
   "master": [
-    "@ZovWuWbQeHbyxHZZwgWhEl3T445yZke3QKn9/8UTzBo=.ed25519"
+    "@ZovWuWbQeHbyxHZZwgWhEl3T445yZke3QKn9/8UTzBo=.ed25519",
+    "@MqO+uVt+2M/o1EBFbnIhDAchF4F7by6NRh716DphJMk=.ed25519"
   ],
   "cms": {
     "root": "%Qmxp+xUtreDtsXk3E8cN05EoJ+dvRztfkdnOiAfGfmc=.sha256"
@@ -31,6 +32,6 @@
     ]
   },
   "bootloader": {
-    "codeMessage": "%tjN36rWlq3urt5K+Qln/ugodj9CpEK6iDljCDTCu7c4=.sha256"
+    "codeMessage": "%tb41/9KFSUnR3ZFkdSQPMrCjUv++VsPKmDizsmz46kI=.sha256"
   }
 }

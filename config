@@ -1,4 +1,5 @@
 {
+  "dev": true,
   "appName": "ssb-cms-test5",
   "productName": "SSB CMS",
   "party": {
@@ -32,6 +33,6 @@
     ]
   },
   "bootloader": {
-    "codeMessage": "%tb41/9KFSUnR3ZFkdSQPMrCjUv++VsPKmDizsmz46kI=.sha256"
+    "codeMessage": "%HsqpsoQkLpHhoE00MrUacO/NMNsAHaDkpkES35N704g=.sha256"
   }
 }

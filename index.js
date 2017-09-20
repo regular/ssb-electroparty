@@ -13,6 +13,8 @@ console.log(`Node version: ${process.version}`)
 // application's path and our index.js does not appear in the argv array
 //
 if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
+
+  console.log('PACKED')
   
   // is this an attempt to run sbot?
   if (process.argv[1]) {
@@ -24,7 +26,11 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
       }
     }
   }
-
+  
+  // cd into __dirname
+  console.log(`cd into ${__dirname}`)
+  process.chdir(__dirname)
+  
   process.argv = [process.argv[0]].concat([`${__dirname}/index.js`]).concat(process.argv.slice(1))
 }
 

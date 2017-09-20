@@ -1,3 +1,7 @@
+
+// HACK
+window.Buffer.prototype._isBuffer = true
+
 const ssbKeys = require('ssb-keys')
 const querystring = require('querystring')
 
@@ -15,7 +19,7 @@ module.exports = function getConfig() {
   ret = parseConfig(fromEnv)
   if (ret) {
     ret.keys = ssbKeys.loadOrCreateSync('electroparty-keys')
-    console.log('ep: config from env')
+    console.log('ep: config from env', ret)
     console.log(`browser pubkey: ${ret.keys.id}`)
     return ret
   }
@@ -23,14 +27,14 @@ module.exports = function getConfig() {
   const fromUrl = document.location.hash && document.location.hash.slice(1)
   ret = parseConfig(fromUrl)
   if (ret) {
-    console.log('ep: config from url')
+    console.log('ep: config from url', ret)
     document.location.hash = ''
     localStorage['electroparty-config'] = fromUrl
     return ret
   }
   const fromStorage = localStorage['electroparty-config']
   if (fromStorage) {
-    console.log('ep: config from localStorage')
+    console.log('ep: config from localStorage', ret)
     ret = parseConfig(fromStorage)
     return ret
   }

@@ -5,6 +5,7 @@
   "description": "Minimal sbot-in-electron setup",
   "main": "index.js",
   "bin": {
+    "electroparty": "bin/electroparty",
     "ep-sbot": "bin/sbot",
     "update-bootloader-config": "bin/update-bootloader-config",
     "url-config-hash": "bin/url-config-hash"

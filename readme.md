@@ -65,6 +65,21 @@ This is how the bootloader section in `config` looks like:
 - `npm run deploy-client` -- browserify and indexhtmlify dummy-client.js and deploy as a blob to ssb
 - `npm run dev-client` -- run dummy-client.js in tour browser, for development
 
+
+### Troubleshooting dev-client script
+
+If you run `npm run dev-client` and the browser reports it cannot connect to sbot, do this:
+
+- copy the browser's public key (found in the console directly above the error message)
+- paste into master array in ./config
+- `bin/sbot control.stop`
+- `cp config ~/.your-ssb_appname/config`
+- `npm start`
+- (quit the electron app)
+- npm run dev-client
+
+This will happen again, when budo decides to use a different port number (because 9966 is not available)
+
 # Additional properties in config
 
  - `appName`, like the environment variable `ssb_appname`, lets tou specify where sbot looks for its config

@@ -48,7 +48,7 @@ function openWindow(opts, cb) {
     mainWindow.webContents.on('new-window', function (e, url) {
       // open in the browser
       e.preventDefault()
-      shell.openExternal(url)
+      electron.shell.openExternal(url)
     })
 
     if (opts.dev) {

@@ -17,6 +17,7 @@ function getConfig() {
   ret = parseConfig(fromEnv)
   if (ret) {
     ret.keys = ssbKeys.loadOrCreateSync('electroparty-keys')
+    console.log('ep: config from env')
     console.log(`browser pubkey: ${ret.keys.id}`)
     return ret
   }
@@ -24,11 +25,18 @@ function getConfig() {
   const fromUrl = document.location.hash && document.location.hash.slice(1)
   ret = parseConfig(fromUrl)
   if (ret) {
+    console.log('ep: config from url')
     document.location.hash = ''
-    // TODO: save to localStorage
+    localStorage['electroparty-config'] = fromUrl
     return ret
   }
-  // TODO: load from localStorage
+  const fromStorage = localStorage['electroparty-config']
+  if (fromStorage) {
+    console.log('ep: config from localStorage')
+    ret = parseConfig(fromStorage)
+    return ret
+  }
+  throw new Error('ssb-electroparty did not find config data. D:')
 }
 
 module.exports = function(opts, cb) {

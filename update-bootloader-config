@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const pull = require('pull-stream')
+const { stdin, stdout, stderr } = require('pull-stdio')
+
+if (process.argv.length < 3) {
+  console.error('Please provide config template file as first argument')
+  process.exit(1)
+}
+
+pull(
+  stdin(),
+  pull.concat( (err, json) => {
+    const key = JSON.parse(json).key
+    let config = JSON.parse(fs.readFileSync(process.argv[2]))
+    config.bootloader.codeMessage = key
+    console.log(JSON.stringify(config, null, 2))
+  })
+)

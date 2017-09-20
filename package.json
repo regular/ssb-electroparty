@@ -19,6 +19,11 @@
     "deploy-client": "bin/sbot publish --type client-update --code \"`browserify dummy-client.js | indexhtmlify | metadataify | bin/sbot blobs.add`\" | bin/update-bootloader-config config > build/config.tmp && cp build/config.tmp config",
     "dev-client": "config_hash=\"`bin/url-config-hash`\" budo dummy-client.js -- -t envify"
   },
+  "browserify": {
+    "transform": [
+      "envify"
+    ]
+  },
   "author": "Jan Bölsche <jan@lagomorph.de> (http://regular.codes)",
   "license": "MIT",
   "devDependencies": {
@@ -28,7 +33,6 @@
     "electron-packager": "^9.0.1",
     "envify": "^4.1.0",
     "indexhtmlify": "^1.3.1",
-    "jsonpath-dl": "^1.1.1",
     "metadataify": "^2.0.0"
   },
   "dependencies": {

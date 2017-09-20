@@ -4,7 +4,7 @@ const pull = require('pull-stream')
 const many = require('pull-many')
 
 module.exports = function(ssb, print, sbotConfig, cb) {
-  let config = JSON.parse(fs.readFileSync(__dirname + path.sep + 'config'))
+  let config = JSON.parse(fs.readFileSync('config'))
   if (!config.bootloader) return cb(new Error('No bootloader data in config'))
   let c = config.bootloader
   print('Booting ...')

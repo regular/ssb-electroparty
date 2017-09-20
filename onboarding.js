@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports = function(ssb, print, messages, cb) {
-  let config = JSON.parse(fs.readFileSync(__dirname + path.sep + 'config'))
+  let config = JSON.parse(fs.readFileSync('config'))
   if (!config.onboarding) return cb(new Error('No onboarding data in config'))
   let c = config.onboarding
   let follow = c.autofollow
@@ -14,7 +14,7 @@ module.exports = function(ssb, print, messages, cb) {
     if (result) print(JSON.stringify(result))
 
     if (messages.pub === false) {
-      print('Use invite code')
+      print(`Use invite code: ${c.inviteCode}`)
       if (!c.inviteCode) return cb(new Error('no invite code in onboarding config'))
       ssb.invite.accept(c.inviteCode, (err, result) => {
         if (!err) messages.pub = true

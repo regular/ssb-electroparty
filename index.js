@@ -37,7 +37,7 @@ let opts = electro.processArgv()
 
 let cannedOpts = {}
 try {
-  cannedOpts = JSON.parse(fs.readFileSync(__dirname + path.sep + "config"))
+  cannedOpts = JSON.parse(fs.readFileSync("config"))
 } catch(e) {
   console.error('Unable to read canned options from config file:' + e.message)
 }

@@ -22,10 +22,13 @@ module.exports = function(ssb, print, messages, cb) {
       })
     } else if (messages.about === false) {
       print('Publish about message')
-      if (!c.name) return cb(new Error('no name in onboarding config'))
+      if (!c.about) return cb(new Error('no about in onboarding config'))
+      if (!c.about.name) return cb(new Error('no about.name in onboarding config'))
       ssb.publish({
         type: 'about',
-        name: c.name
+        name: c.about.name,
+        root: c.about.root,
+        branch: c.about.branch
       }, (err, result) => {
         if (!err) messages.about = true
         next(err, result)

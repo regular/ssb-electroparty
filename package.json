@@ -1,7 +1,7 @@
 {
   "name": "ssb-electroparty",
   "version": "1.0.0",
-  "productName": "SSB Electroparty",
+  "productName": "SSB-Electroparty",
   "description": "Minimal sbot-in-electron setup",
   "main": "index.js",
   "bin": {

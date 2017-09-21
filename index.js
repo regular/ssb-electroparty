@@ -34,6 +34,11 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
   process.argv = [process.argv[0]].concat([`${__dirname}/index.js`]).concat(process.argv.slice(1))
 }
 
+// filter OSX process serial number argument
+// https://stackoverflow.com/questions/10242115/os-x-strange-psn-command-line-parameter-when-launched-from-finder
+// only passed on first launch ever??
+process.argv = process.argv.filter( x => !/-psn/.test(x) )
+
 if (process.argv.length<3) {
   console.log('adding default argument')
   process.argv.push(`${__dirname}/bootstrap.js`)

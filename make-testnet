@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+if [ "$#" -ne 1 ]; then
+  echo "Usage: make-testnet number"
+  exit 1
+fi
+./make-test-config.js $1
+ssh korn "mkdir -p ~/.ssb-testnet-$1"
+scp testnet-config.pub korn:~/.ssb-testnet-$1/config
+invite=$(ssh -t korn ". ~/.nvm/nvm.sh && ssb_appname=ssb-testnet-$1 sbot server 2>&1 > /dev/null&; echo \$! > ~/ssb-testnet-$1.pid; sleep 1; ssb_appname=ssb-testnet-$1 sbot invite.create 1" | tail -n1)
+bin/update-onboarding-config testnet-config "$invite" "Mr. Foo Bar"> config

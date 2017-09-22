@@ -1,6 +1,8 @@
 
 // HACK
-window.Buffer.prototype._isBuffer = true
+if (window.Buffer) {
+  window.Buffer.prototype._isBuffer = true
+}
 
 const ssbKeys = require('ssb-keys')
 const querystring = require('querystring')

@@ -24,14 +24,18 @@ module.exports = function(ssb, print, messages, cb) {
       print('Publish about message')
       if (!c.about) return cb(new Error('no about in onboarding config'))
       if (!c.about.name) return cb(new Error('no about.name in onboarding config'))
-      ssb.publish({
-        type: 'about',
-        name: c.about.name,
-        root: c.about.root,
-        branch: c.about.branch
-      }, (err, result) => {
-        if (!err) messages.about = true
-        next(err, result)
+      ssb.whoami( (err, feed) => {
+        if (err) return cb(err)
+        ssb.publish({
+          type: 'about',
+          about: feed.id,
+          name: c.about.name,
+          root: c.about.root,
+          branch: c.about.branch
+        }, (err, result) => {
+          if (!err) messages.about = true
+          next(err, result)
+        })
       })
     } else if (messages.contact === false && follow.length) {
       let feed = follow.shift()

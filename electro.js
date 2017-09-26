@@ -104,6 +104,7 @@ function loadWebContent(filename, cb) {
 }
 
 module.exports = {
+  ready,
   processArgv,
   openWindow,
   loadWebContent

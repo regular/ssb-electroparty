@@ -55,6 +55,20 @@ try {
 
 opts = Object.assign({}, cannedOpts, opts)
 
+electro.ready.once( r => {
+  if (!r) return
+  const electron = require('electron')
+  const Menu = electron.Menu
+  const defaultMenu = require('electron-default-menu')
+  const menu = defaultMenu(electron.app, electron.shell)
+
+  const menuEntries = (opts.electroparty && opts.electroparty.menu) || {}
+  for (let k in menuEntries) {
+    const view = menu.find(x => x.label === k)
+    if (view) view.submenu = menuEntries[k]
+  }
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+})
 
 electro.openWindow(opts, (err, mainWindow)=>{
   if (err) return console.error(err)

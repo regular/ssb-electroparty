@@ -22,6 +22,8 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
     if (s.length>2) {
       s = s.slice(-2)
       if (s[0] === 'ssb-party') {
+        process.removeAllListeners('uncaughtException')
+        process.removeAllListeners('exit')
         return require(process.argv[1])
       }
     }

@@ -44,6 +44,6 @@
     "pull-many": "^1.0.8",
     "scuttlebot": "^10.4.4",
     "ssb-client": "^4.5.1",
-    "ssb-party": "^0.5.1"
+    "ssb-party": "regular/ssb-party"
   }
 }

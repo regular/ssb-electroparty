@@ -59,7 +59,7 @@ opts = Object.assign({}, cannedOpts, opts)
 
 electro.ready.once( r => {
   if (!r) return
-  const electron = require('electron')
+  const electron = electro.electron
   const Menu = electron.Menu
   const defaultMenu = require('electron-default-menu')
   const menu = defaultMenu(electron.app, electron.shell)

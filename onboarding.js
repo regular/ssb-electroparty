@@ -6,6 +6,7 @@ module.exports = function(ssb, print, messages, cb) {
   if (!config.onboarding) return cb(new Error('No onboarding data in config'))
   let c = config.onboarding
   let follow = c.autofollow
+  if (!c.inviteCode) print('no invite code in onboarding config')
   if (!(follow && follow.length>0)) return cb(new Error('No autofollow in onboarding config'))
   print('Onbarding ...')
 
@@ -14,8 +15,8 @@ module.exports = function(ssb, print, messages, cb) {
     if (result) print(JSON.stringify(result))
 
     if (messages.pub === false) {
+      if (!c.inviteCode) return cb(null)
       print(`Use invite code: ${c.inviteCode}`)
-      if (!c.inviteCode) return cb(new Error('no invite code in onboarding config'))
       ssb.invite.accept(c.inviteCode, (err, result) => {
         if (!err) messages.pub = true
         return next(err, result)

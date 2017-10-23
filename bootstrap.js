@@ -14,13 +14,17 @@ function print(s) {
   process.stdout.write(s + '\n')
 }
 
-module.exports = function({keys, sbotConfig, manifest}) {
+module.exports = function({keys, sbotConfig, manifest, ips}) {
   //print(JSON.stringify(sbotConfig, null, 2))
   print(`argv: ${process.argv.join(' ')}`)
   print(`appName: ${sbotConfig.appName}`)
   print(`product name: ${sbotConfig.productName}`)
   print(`network key: ${sbotConfig.caps.shs}`)
-  print(`browser pubkey: ${keys.public}`)
+  print(`browser pubkey: ${keys.id}`)
+  print('network interfaces:')
+  ips.forEach( ({name, address}) => {
+    print(`- ${name}: ${address}`)
+  })
   ssbClient(keys, {
     caps: sbotConfig.caps,
     remote: sbotConfig.wsAddress,
@@ -28,58 +32,63 @@ module.exports = function({keys, sbotConfig, manifest}) {
     manifest: manifest
   }, (err, ssb) => {
     if (err) return print(`Failed to connect to sbot from client: ${err.message}`)
-    ssb.whoami( (err, feed) => {
-      if (err) return print(err.message)
-      print(`your sbot's pubkey: ${feed.id}`)
+    // TODO: implement version command in sbot
+    //ssb.version( (err, version) => {
+      //if (err) return print(`Failed to get sbot version: ${err.message}`)
+      //print(`scuttlebot version: ${version}`)
+      ssb.whoami( (err, feed) => {
+        if (err) return print(err.message)
+        print(`your sbot's pubkey: ${feed.id}`)
 
-      let requiredMsgTypes = {
-        about: false,
-        pub: false,
-        contact: false
-      }
+        let requiredMsgTypes = {
+          about: false,
+          pub: false,
+          contact: false
+        }
 
-      let drain
-      pull(
-        ssb.createHistoryStream({id: feed.id}),
-        pull.filter( kv => {
-          let t = kv.value.content && kv.value.content.type
-          if (Object.keys(requiredMsgTypes).includes(t) && requiredMsgTypes[t] === false) {
-            if (t === 'contact' && kv.value.content.autofollow) return false
-            requiredMsgTypes[t] = kv.value.sequence
-            print(`Found ${t} message with sequence number ${kv.value.sequence}`)
-            if (!Object.values(requiredMsgTypes).includes(false)) drain.abort()
-            return true
-          }
-          return false
-        }),
-        drain = pull.drain( kv => {
-        }, err => {
-          if (err) return print(err)
-          if (Object.values(requiredMsgTypes).includes(false)) {
-            print('Needs onboarding')
-            onboarding(ssb, print, requiredMsgTypes, (err) => {
-              if (err) return print(`Onboarding failed: ${err.message}`)
-              print('Onboarding successful!')
+        let drain
+        pull(
+          ssb.createHistoryStream({id: feed.id}),
+          pull.filter( kv => {
+            let t = kv.value.content && kv.value.content.type
+            if (Object.keys(requiredMsgTypes).includes(t) && requiredMsgTypes[t] === false) {
+              if (t === 'contact' && kv.value.content.autofollow) return false
+              requiredMsgTypes[t] = kv.value.sequence
+              print(`Found ${t} message with sequence number ${kv.value.sequence}`)
+              if (!Object.values(requiredMsgTypes).includes(false)) drain.abort()
+              return true
+            }
+            return false
+          }),
+          drain = pull.drain( kv => {
+          }, err => {
+            if (err) return print(err)
+            if (Object.values(requiredMsgTypes).includes(false)) {
+              print('Needs onboarding')
+              onboarding(ssb, print, requiredMsgTypes, ips, (err) => {
+                if (err) return print(`Onboarding failed: ${err.message}`)
+                print('Onboarding successful!')
+                run()
+              })
+            } else {
+              print('Does not need onboarding')
               run()
-            })
-          } else {
-            print('Does not need onboarding')
-            run()
-          }
-        })
-      )
+            }
+          })
+        )
 
-      function run() {
-        bootloader(ssb, print, {keys, sbotConfig, manifest}, (err, codeBlob) => {
-          if (err) return print(`Bootloader failed: ${err.message}`)
-          const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
-          print(`Loading ${url}`)
-          let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
-          let fragment = querystring.stringify({s:configB64})
-          document.location.href = `${url}#${fragment}`
-        })
-      }
+        function run() {
+          bootloader(ssb, print, {keys, sbotConfig, manifest}, (err, codeBlob) => {
+            if (err) return print(`Bootloader failed: ${err.message}`)
+            const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
+            print(`Loading ${url}`)
+            let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
+            let fragment = querystring.stringify({s:configB64})
+            document.location.href = `${url}#${fragment}`
+          })
+        }
 
-    })
+      })
+    //})
   })
 }

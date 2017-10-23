@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-module.exports = function(ssb, print, messages, cb) {
+module.exports = function(ssb, print, messages, ips, cb) {
   let config = JSON.parse(fs.readFileSync('config'))
   if (!config.onboarding) return cb(new Error('No onboarding data in config'))
   let c = config.onboarding
@@ -27,13 +27,13 @@ module.exports = function(ssb, print, messages, cb) {
       if (!c.about.name) return cb(new Error('no about.name in onboarding config'))
       ssb.whoami( (err, feed) => {
         if (err) return cb(err)
-        ssb.publish({
+        ssb.publish(Object.assign(c.about.includeIPs ? {ips} : {} , {
           type: 'about',
           about: feed.id,
           name: c.about.name,
           root: c.about.root,
           branch: c.about.branch
-        }, (err, result) => {
+        }), (err, result) => {
           if (!err) messages.about = true
           next(err, result)
         })

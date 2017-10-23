@@ -113,7 +113,8 @@ electro.openWindow(opts, (err, mainWindow)=>{
         console.log('Sending config ...')
         mainWindow.send('sbot.config', JSON.stringify({
           manifest, 
-          sbotConfig: config
+          sbotConfig: config,
+          ips: require('./get-ips')()
         }))
       })
     })

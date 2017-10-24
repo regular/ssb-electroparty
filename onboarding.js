@@ -4,8 +4,8 @@ const path = require('path')
 module.exports = function(ssb, config, print, messages, ips, cb) {
   if (!config.onboarding) return cb(new Error('No onboarding data in config'))
   let c = config.onboarding
-  let follow = c.autofollow
   if (!c.inviteCode) print('no invite code in onboarding config')
+  let follow = c.autofollow
   if (!(follow && follow.length>0)) return cb(new Error('No autofollow in onboarding config'))
   print('Onbarding ...')
 
@@ -14,7 +14,11 @@ module.exports = function(ssb, config, print, messages, ips, cb) {
     if (result) print(JSON.stringify(result))
 
     if (messages.pub === false) {
-      if (!c.inviteCode) return cb(null)
+      if (!c.inviteCode) {
+	 print('Skipping invite step.')
+	 messages.pub = true
+	 return next()
+      }
       print(`Use invite code: ${c.inviteCode}`)
       ssb.invite.accept(c.inviteCode, (err, result) => {
         if (!err) messages.pub = true
@@ -38,6 +42,7 @@ module.exports = function(ssb, config, print, messages, ips, cb) {
         })
       })
     } else if (messages.contact === false && follow.length) {
+      // TODO: check to see if we already follow that feed or not
       let feed = follow.shift()
       print(`Follow ${feed}`)
       ssb.publish({

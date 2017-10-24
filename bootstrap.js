@@ -70,7 +70,7 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
             if (err) return print(err)
             if (Object.values(requiredMsgTypes).includes(false)) {
               print('Needs onboarding')
-              onboarding(ssb, sbotConfig, rint, requiredMsgTypes, ips, (err) => {
+              onboarding(ssb, sbotConfig, print, requiredMsgTypes, ips, (err) => {
                 if (err) return print(`Onboarding failed: ${err.message}`)
                 print('Onboarding successful!')
                 run()

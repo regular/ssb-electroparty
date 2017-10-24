@@ -1,8 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-module.exports = function(ssb, print, messages, ips, cb) {
-  let config = JSON.parse(fs.readFileSync('config'))
+module.exports = function(ssb, config, print, messages, ips, cb) {
   if (!config.onboarding) return cb(new Error('No onboarding data in config'))
   let c = config.onboarding
   let follow = c.autofollow

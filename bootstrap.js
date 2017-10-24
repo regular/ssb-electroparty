@@ -8,6 +8,10 @@ const bootloader = require('./bootloader')
 
 let pre = document.createElement('pre')
 document.body.appendChild(pre)
+document.body.style.backgroundColor = '#002833'
+pre.style.color = '#839496'
+pre.style.backgroundColor = '#002833'
+pre.style.fontWeight = 800
 
 function print(s) {
   pre.innerText += s + '\n'
@@ -25,6 +29,7 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
   ips.forEach( ({name, address}) => {
     print(`- ${name}: ${address}`)
   })
+  print(`about.name: ${sbotConfig.onboarding && sbotConfig.onboarding.about.name}`)
   ssbClient(keys, {
     caps: sbotConfig.caps,
     remote: sbotConfig.wsAddress,
@@ -65,7 +70,7 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
             if (err) return print(err)
             if (Object.values(requiredMsgTypes).includes(false)) {
               print('Needs onboarding')
-              onboarding(ssb, print, requiredMsgTypes, ips, (err) => {
+              onboarding(ssb, sbotConfig, rint, requiredMsgTypes, ips, (err) => {
                 if (err) return print(`Onboarding failed: ${err.message}`)
                 print('Onboarding successful!')
                 run()
@@ -78,13 +83,15 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
         )
 
         function run() {
-          bootloader(ssb, print, {keys, sbotConfig, manifest}, (err, codeBlob) => {
+          bootloader(ssb, print, sbotConfig, (err, codeBlob) => {
             if (err) return print(`Bootloader failed: ${err.message}`)
             const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
             print(`Loading ${url}`)
             let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
             let fragment = querystring.stringify({s:configB64})
-            document.location.href = `${url}#${fragment}`
+            setTimeout( ()=>{
+              document.location.href = `${url}#${fragment}`
+            }, 14000)
           })
         }
 

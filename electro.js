@@ -62,6 +62,12 @@ function openWindow(opts, cb) {
       mainWindow = null;
     })
 
+    // shouldn't be needed but is.
+    // https://github.com/electron/electron/issues/4932
+    if (opts.width && opts.height && opts.enableLargerThanScreen) {
+      mainWindow.setContentSize(opts.width, opts.height)
+    }
+
     cb(null, mainWindow)
   })
 }

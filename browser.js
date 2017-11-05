@@ -1,5 +1,6 @@
 const streams = require('stream')
-const ipc = require('electron').ipcRenderer
+const electron = require('electron')
+const ipc = electron.ipcRenderer
 const ssbKeys = require('ssb-keys')
 
 const opts = require('querystring').parse(decodeURIComponent(location.search.substring(1)))
@@ -46,5 +47,13 @@ ipc.send('pubkey', keys.public)
 ipc.on('sbot.config', function (_, json) {
   let config = JSON.parse(json)
   config.keys = keys
+
+  if (!config.sbotConfig.allowBrowserZoom) {
+    // to disable pinch zoom feature on electron
+    const webFrame = electron && electron.webFrame
+    webFrame.setVisualZoomLevelLimits(1, 1)
+    webFrame.setLayoutZoomLevelLimits(0, 0)
+  }
+
   require(require('path').resolve(process.argv[1]))(config)
 })

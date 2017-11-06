@@ -91,7 +91,7 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
             let fragment = querystring.stringify({s:configB64})
             setTimeout( ()=>{
               document.location.href = `${url}#${fragment}`
-            }, 14000)
+            }, 1000)
           })
         }
 

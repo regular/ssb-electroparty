@@ -44,6 +44,7 @@ function openWindow(opts, cb) {
     process.stdin.pause()
 
     mainWindow = new BrowserWindow(opts)
+    mainWindow.setMenu(null)
 
     mainWindow.webContents.on('new-window', function (e, url) {
       // open in the browser

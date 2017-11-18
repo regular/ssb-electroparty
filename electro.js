@@ -86,7 +86,10 @@ function loadWebContent(filename, cb) {
   mainWindow.loadURL('file://' + path.join(__dirname, filename) + '?' +
   encodeURIComponent(qs.stringify(proc)));
 
+  let handledDomReady = false
   mainWindow.webContents.on('dom-ready', function () {
+    if (handledDomReady) return
+    handledDomReady = true
     console.log('dom ready')
     process.stdin
       .on('data', function (data) {

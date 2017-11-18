@@ -48,12 +48,17 @@ ipc.on('sbot.config', function (_, json) {
   let config = JSON.parse(json)
   config.keys = keys
 
+  /* this has moved into application code
+   * because the setting does not survive page reload
+   */
+  /*
   if (!config.sbotConfig.allowBrowserZoom) {
     // to disable pinch zoom feature on electron
     const webFrame = electron && electron.webFrame
     webFrame.setVisualZoomLevelLimits(1, 1)
     webFrame.setLayoutZoomLevelLimits(0, 0)
   }
+  */
 
   require(require('path').resolve(process.argv[1]))(config)
 })

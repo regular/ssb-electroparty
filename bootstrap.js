@@ -83,9 +83,8 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
         )
 
         function run() {
-          bootloader(ssb, print, sbotConfig, (err, codeBlob) => {
+          bootloader(ssb, print, sbotConfig, (err, url) => {
             if (err) return print(`Bootloader failed: ${err.message}`)
-            const url = `http://${sbotConfig.host || 'localhost'}:${sbotConfig.ws.port}/blobs/get/${codeBlob}`
             print(`Loading ${url}`)
             let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
             let fragment = querystring.stringify({s:configB64})

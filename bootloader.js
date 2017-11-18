@@ -8,8 +8,12 @@ module.exports = function(ssb, print, config, cb) {
   let c = config.bootloader
   print('Booting ...')
   let codeMessage = c.codeMessage
-  if (!codeMessage) {
-    return cb(new Error('No codeMessages specified bootloader in config'))
+  let url = c.url
+  if (!codeMessage && !url) {
+    return cb(new Error('No codeMessages and no url specified in bootloader in config'))
+  }
+  if (url) {
+    return cb(null, url)
   }
   print(`Looking for client-update messages ${codeMessage} ...`)
   let synced = false
@@ -31,7 +35,8 @@ module.exports = function(ssb, print, config, cb) {
         ssb.blobs.want(codeBlob, err => {
           if (err) return cb(err)
           print('Download complete')
-          cb(null, codeBlob)
+          const url = `http://${config.host || 'localhost'}:${config.ws.port}/blobs/get/${codeBlob}`
+          cb(null, url)
         })
       }
     }, err => {

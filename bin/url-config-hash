@@ -4,10 +4,15 @@ const fs = require('fs')
 const querystring = require('querystring')
 const sbotConfig = JSON.parse(fs.readFileSync('config'))
 const manifest = JSON.parse(fs.readFileSync(`${process.env.HOME}/.${sbotConfig.appName}/manifest.json`))
+const ips = require('../get-ips')()
 const keys = null
 
 require('child_process').execFile(`${__dirname}/sbot`, ['ws.getAddress'], (err, wsAddress) => {
-  sbotConfig.wsAddress = JSON.parse(wsAddress)
+  wsAddress = JSON.parse(wsAddress)
+  wsAddress = wsAddress.replace('localhost', ips[0].address)
+  wsAddress = wsAddress.replace('127.0.0.1', ips[0].address)
+  sbotConfig.wsAddress = wsAddress
+
   const configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
   const fragment = querystring.stringify({s:configB64})
   console.log(fragment)

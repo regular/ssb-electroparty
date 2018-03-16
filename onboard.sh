@@ -9,5 +9,4 @@ set -e
 bin/update-onboarding-config "$1" "$(./getinvite $1)" "$2" > config
 npm run build
 npm run pack
-#rm config
 ./upload.sh

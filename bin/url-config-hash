@@ -1,20 +1,36 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const querystring = require('querystring')
+const multicb = require('multicb')
+const Child = require('child_process')
+const Config = require('../config.js') // .js by intention!
+
 const sbotConfig = JSON.parse(fs.readFileSync('config'))
 const manifest = JSON.parse(fs.readFileSync(`${process.env.HOME}/.${sbotConfig.appName}/manifest.json`))
 const ips = require('../get-ips')()
 const keys = null
 
-require('child_process').execFile(`${__dirname}/sbot`, ['ws.getAddress'], (err, wsAddress) => {
+const done = multicb({pluck: 1, spread: true})
+
+Child.execFile(`${__dirname}/sbot`, ['ws.getAddress'], done())
+Child.exec('git rev-parse --abbrev-ref HEAD', done())
+
+done( (err, wsAddress, codeBranch) => {
   wsAddress = JSON.parse(wsAddress)
   wsAddress = wsAddress.replace('localhost', ips[0].address)
   wsAddress = wsAddress.replace('127.0.0.1', ips[0].address)
   sbotConfig.wsAddress = wsAddress
 
-  const configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
-  const fragment = querystring.stringify({s:configB64})
+  codeBranch = codeBranch.replace(/\s+$/,'')
+
+  const versions = {
+    webapp: {
+      codeMessage: 'dev',
+      codeBranch
+    }
+  }
+
+  const fragment = Config.urlEncodeConfig(keys, sbotConfig, manifest, versions)
   console.log(fragment)
 })
 

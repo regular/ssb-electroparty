@@ -3,7 +3,7 @@
 const fs = require('fs')
 const multicb = require('multicb')
 const Child = require('child_process')
-const Config = require('../config.js') // .js by intention!
+const context = require('../context')
 
 const sbotConfig = JSON.parse(fs.readFileSync('config'))
 const manifest = JSON.parse(fs.readFileSync(`${process.env.HOME}/.${sbotConfig.appName}/manifest.json`))
@@ -30,7 +30,7 @@ done( (err, wsAddress, codeBranch) => {
     }
   }
 
-  const fragment = Config.urlEncodeConfig(keys, sbotConfig, manifest, versions)
+  const fragment = context.urlEncode(keys, sbotConfig, manifest, versions)
   console.log(fragment)
 })
 

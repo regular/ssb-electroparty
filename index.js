@@ -24,6 +24,7 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
       if (s[0] === 'ssb-party') {
         process.removeAllListeners('uncaughtException')
         process.removeAllListeners('exit')
+        process.title = 'sbot'
         return require(process.argv[1])
       }
     }
@@ -53,6 +54,7 @@ try {
   cannedOpts = JSON.parse(fs.readFileSync("config"))
 } catch(e) {
   console.error('Unable to read canned options from config file:' + e.message)
+  process.exit(1)
 }
 
 opts = Object.assign({}, cannedOpts, opts)

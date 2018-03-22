@@ -19,7 +19,6 @@ function print(s) {
 }
 
 module.exports = function({keys, sbotConfig, manifest, ips}) {
-  //print(JSON.stringify(sbotConfig, null, 2))
   print(`argv: ${process.argv.join(' ')}`)
   print(`appName: ${sbotConfig.appName}`)
   print(`product name: ${sbotConfig.productName}`)
@@ -70,11 +69,16 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
             if (err) return print(err)
             if (Object.values(requiredMsgTypes).includes(false)) {
               print('Needs onboarding')
-              onboarding(ssb, sbotConfig, print, requiredMsgTypes, ips, (err) => {
-                if (err) return print(`Onboarding failed: ${err.message}`)
-                print('Onboarding successful!')
+              if (sbotConfig.onboarding) {
+                onboarding(ssb, sbotConfig, print, requiredMsgTypes, ips, (err) => {
+                  if (err) return print(`Onboarding failed: ${err.message}`)
+                  print('Onboarding successful!')
+                  run()
+                })
+              } else {
+                print('No onboarding data in config -- skipping')
                 run()
-              })
+              }
             } else {
               print('Does not need onboarding')
               run()
@@ -83,13 +87,11 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
         )
 
         function run() {
-          bootloader(ssb, print, sbotConfig, (err, url) => {
+          const context = {keys, sbotConfig, manifest, versions: process.versions}
+          bootloader(ssb, print, context, (err, url) => {
             if (err) return print(`Bootloader failed: ${err.message}`)
-            print(`Loading ${url}`)
-            let configB64 = Buffer.from(JSON.stringify({keys, sbotConfig, manifest})).toString('base64')
-            let fragment = querystring.stringify({s:configB64})
             setTimeout( ()=>{
-              document.location.href = `${url}#${fragment}`
+              document.location.href = url
             }, 1000)
           })
         }

@@ -1,11 +1,11 @@
 const ssbClient = require('ssb-client')
 const merge = require('deep-extend')
-const getConfig = require('./config.js') // .js is intentional
+const getContext = require('./context')
 
 module.exports = function(opts, cb) {
   if (typeof opts === 'function') {cb = opts; opts = {}}
   opts = opts || {}
-  const c = getConfig()
+  const c = getContext()
   const {keys, sbotConfig, manifest} = c
   merge(sbotConfig, {
     remote: sbotConfig.wsAddress,

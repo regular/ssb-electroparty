@@ -1,0 +1,27 @@
+set -e
+
+stripQuotes() {
+  temp=$1
+  temp="${temp%\"}"
+  temp="${temp#\"}"
+  echo "$temp"
+}
+
+codeBranch=`git rev-parse --abbrev-ref HEAD`
+name=`date "+%Y-%m-%d"`-$codeBranch
+
+root=`cat config|jsonfilter cms.root`
+branch=`cat config|jsonfilter cms.webappBranch`
+appId=`cat config|jsonfilter bootloader.webapp.appId`
+
+root=`stripQuotes $root`
+branch=`stripQuotes $branch`
+appId=`stripQuotes $appId`
+
+echo "Compiling and Uploading $name ..."
+codeBlob=`browserify index.js | indexhtmlify | metadataify | ep-sbot blobs.add`
+
+echo "Blob hash is $codeBlob"
+
+echo "Publishing ..."
+ep-sbot publish --root $root --branch $branch --name "$name" --type webapp --appId $appId --codeBranch "$codeBranch" --code "$codeBlob"

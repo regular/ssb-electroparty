@@ -7,6 +7,7 @@
   "bin": {
     "electroparty": "bin/electroparty",
     "ep-sbot": "bin/sbot",
+    "ep-deploy-webapp": "bin/deploy-webapp",
     "update-bootloader-config": "bin/update-bootloader-config",
     "url-config-hash": "bin/url-config-hash"
   },
@@ -33,6 +34,7 @@
     "electron-packager": "^9.0.1",
     "envify": "^4.1.0",
     "indexhtmlify": "^1.3.1",
+    "jsonfilter": "^1.1.2",
     "metadataify": "^2.0.0",
     "pull-stdio": "^0.1.0"
   },

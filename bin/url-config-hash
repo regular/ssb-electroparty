@@ -26,6 +26,8 @@ done( (err, wsAddress, codeBranch) => {
   const versions = {
     webapp: {
       codeMessage: 'dev',
+      sequence: 0,
+      author: 'dev',
       codeBranch
     }
   }

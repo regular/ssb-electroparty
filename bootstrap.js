@@ -64,8 +64,7 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
             }
             return false
           }),
-          drain = pull.drain( kv => {
-          }, err => {
+          drain = pull.drain( kv => { }, err => {
             if (err) return print(err)
             if (Object.values(requiredMsgTypes).includes(false)) {
               print('Needs onboarding')

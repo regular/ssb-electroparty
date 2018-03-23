@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const childproc = require('child_process')
 const party = require('ssb-party')
 const ssbKeys = require('ssb-keys')
 const createConfig = require('ssb-config/inject')
@@ -17,17 +18,41 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
   console.log('PACKED')
   
   // is this an attempt to run sbot?
-  if (process.argv[1]) {
+  if (process.argv.length > 1) {
+    console.log('argv[1]', process.argv[1])
     let s = process.argv[1].split(path.sep)
     if (s.length>2) {
       s = s.slice(-2)
       if (s[0] === 'ssb-party') {
+        console.log('We are the sbot process')
         process.removeAllListeners('uncaughtException')
         process.removeAllListeners('exit')
         process.title = 'sbot'
         return require(process.argv[1])
       }
     }
+  } else {
+    console.log('** Electroparty Bouncer **')
+
+    const startChild = () => {
+      // With no arguments, we are the watchdog process
+      console.log('Starting child')
+      const child = childproc.spawn(process.execPath, ['--started-by-watchdog'], {
+        stdio: ['inherit', 'inherit', 'inherit'],
+      })
+      console.log(`Pid: ${child.pid}`)
+      child.on('close', code => {
+        console.log(`child process exited with code ${code}`)
+        if (code !== 0) {
+          console.log('Will restart')
+          setTimeout(startChild, 1000)
+        } else {
+          process.exit(0)
+        }
+      })
+    }
+    startChild()
+    return
   }
   
   // cd into __dirname
@@ -41,6 +66,8 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
 // https://stackoverflow.com/questions/10242115/os-x-strange-psn-command-line-parameter-when-launched-from-finder
 // only passed on first launch ever??
 process.argv = process.argv.filter( x => !/-psn/.test(x) )
+// also remove watchdog flag
+process.argv = process.argv.filter( x => x !== '--started-by-watchdog' )
 
 if (process.argv.length<3) {
   console.log('adding default argument')
@@ -68,7 +95,9 @@ electro.ready.once( r => {
 
   const menuEntries = (opts.electroparty && opts.electroparty.menu) || {}
   for (let k in menuEntries) {
+    //jshint -W083
     const view = menu.find(x => x.label === k)
+    //jshint +W083
     if (view) view.submenu = menuEntries[k]
   }
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))

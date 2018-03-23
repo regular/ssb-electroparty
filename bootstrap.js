@@ -90,6 +90,15 @@ module.exports = function({keys, sbotConfig, manifest, ips}) {
           bootloader(ssb, print, context, (err, url) => {
             if (err) return print(`Bootloader failed: ${err.message}`)
             setTimeout( ()=>{
+              // if we are still here after 30 seconds
+              // we stop the sbot, which will cause
+              // all processes except the watchdog to quit (well ... crash)
+              // This hupefullt fixes a situation where sbot
+              // simply does not sync anymore and we wait for
+              // the code blob indefinitely.
+              ssb.control.stop()
+            }, 30000)
+            setTimeout( ()=>{
               document.location.href = url
             }, 1000)
           })

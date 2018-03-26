@@ -7,6 +7,7 @@
   "bin": {
     "electroparty": "bin/electroparty",
     "ep-sbot": "bin/sbot",
+    "ep-add-blob": "bin/add-blob",
     "ep-deploy-webapp": "bin/deploy-webapp",
     "update-bootloader-config": "bin/update-bootloader-config",
     "url-config-hash": "bin/url-config-hash"
@@ -30,8 +31,8 @@
   "devDependencies": {
     "browserify": "^14.4.0",
     "cross-script": "^1.0.5",
-    "electron": "^1.7.8",
-    "electron-packager": "^9.0.1",
+    "electron": "1.7.8",
+    "electron-packager": "9.0.1",
     "envify": "^4.1.0",
     "indexhtmlify": "^1.3.1",
     "jsonfilter": "^1.1.2",
@@ -42,7 +43,7 @@
     "budo": "^10.0.4",
     "deep-extend": "^0.5.0",
     "electro": "^2.0.3",
-    "electron-default-menu": "^1.0.1",
+    "electron-default-menu": "1.0.1",
     "pull-many": "^1.0.8",
     "scuttlebot": "^10.4.4",
     "ssb-client": "^4.5.1",

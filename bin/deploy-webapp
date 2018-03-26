@@ -19,7 +19,7 @@ branch=`stripQuotes $branch`
 appId=`stripQuotes $appId`
 
 echo "Compiling and Uploading $name ..."
-codeBlob=`browserify index.js | indexhtmlify | metadataify | ep-sbot blobs.add`
+codeBlob=`browserify index.js | indexhtmlify | metadataify | ep-add-blob`
 
 echo "Blob hash is $codeBlob"
 

@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+/*
+ * sbot blobs.add tends to crash in some versions. That's why this exissts.
+ */
+
+const fs = require('fs')
+const path = require('path')
+
+const pull = require('pull-stream')
+const stdio = require('pull-stdio')
+const ssbClient = require('ssb-client')
+const createConfig = require('ssb-config/inject')
+const ssbKeys = require('ssb-keys')
+const {appName} = JSON.parse(fs.readFileSync('config'))
+if (!appName) {
+  console.error('No appname found in ./config')
+  process.exit(1)
+}
+const config = createConfig(appName)
+const keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
+
+ssbClient(keys, config, (err, ssb) => {
+  if (err) {
+    console.error(err)
+    process.exit(1)
+  }
+
+  pull(
+    stdio.stdin(),
+    ssb.blobs.add(function (err, id) {
+      if (err) {
+        conse.error(err)
+        process.exit(1)
+      }
+      console.log(id)
+      process.exit(0)
+    })
+  )
+})
+

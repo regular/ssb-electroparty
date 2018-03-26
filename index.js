@@ -45,7 +45,7 @@ if (process.argv[0].split(path.sep).slice(-1)[0].toLowerCase() !== 'electron') {
         console.log(`child process exited with code ${code}`)
         if (code !== 0) {
           console.log('Will restart')
-          setTimeout(startChild, 1000)
+          setTimeout(startChild, 100)
         } else {
           process.exit(0)
         }

@@ -4,7 +4,43 @@ if (typeof window !== 'undefined' && window.Buffer) {
   window.Buffer.prototype._isBuffer = true
 }
 
-const ssbKeys = require('ssb-keys')
+// jshint -W069
+function nativeRequire(modname) {
+  // we use native require if available,
+  // so we have a chance to get native crypto code
+  // in node and electron.
+  const g = typeof window !== 'undefined' ? window : global
+  if (g['require']) {
+    console.warn(`Using native ${modname}`)
+    let modpath = 'ssb-client'
+    const argv0 = g['process'] && g['process'].argv0
+    console.warn(`process.argv0 in ep client: ${argv0}`)
+    if (argv0.includes('node_modules')) {
+      // it seems we are in an non-packed electron-environment
+      // In this case, the module will not be found with require.resolve
+      const path = g['require']('path')
+      modpath = path.join(argv0.replace(/node_modules.*/, ''), 'node_modules', 'ssb-client')
+    }
+    console.warn(`Trying to require ${modpath}`)
+    try {
+      return g['require'](modpath)
+    } catch(e) {
+      console.warn(`Failed: ${e.message}`)
+    }
+  }
+  return null
+}
+// jshint +W069
+
+function SSBKeys() {
+  const n = nativeRequire('ssb-keys')
+  if (n) return n
+  console.warn('Using browserified ssb-keys')
+  return require('ssb-keys')
+}
+
+console.warn('context requires ssb-keys')
+const ssbKeys = SSBKeys() 
 const querystring = require('querystring')
 
 function urlDecode(str) {
@@ -79,3 +115,4 @@ module.exports = getContext
 module.exports.urlEncode = urlEncode
 module.exports.urlDecode = urlDecode
 module.exports.makeWebappURL = makeWebappURL
+module.exports.nativeRequire = nativeRequire

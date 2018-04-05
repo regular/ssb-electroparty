@@ -12,14 +12,14 @@ function nativeRequire(modname) {
   const g = typeof window !== 'undefined' ? window : global
   if (g['require']) {
     console.warn(`Using native ${modname}`)
-    let modpath = 'ssb-client'
+    let modpath = modname
     const argv0 = g['process'] && g['process'].argv0
     console.warn(`process.argv0 in ep client: ${argv0}`)
     if (argv0.includes('node_modules')) {
       // it seems we are in an non-packed electron-environment
       // In this case, the module will not be found with require.resolve
       const path = g['require']('path')
-      modpath = path.join(argv0.replace(/node_modules.*/, ''), 'node_modules', 'ssb-client')
+      modpath = path.join(argv0.replace(/node_modules.*/, ''), 'node_modules', modname)
     }
     console.warn(`Trying to require ${modpath}`)
     try {

@@ -78,6 +78,7 @@ function _getContext() {
   const fromUrl = document.location.hash && document.location.hash.slice(1)
   ret = urlDecode(fromUrl)
   if (ret) {
+    ret.keys = ret.keys || ssbKeys.loadOrCreateSync('electroparty-keys')
     console.log('ep: config from url', ret)
     history.replaceState({}, '', document.location.href.replace(document.location.hash, ''))
     localStorage['electroparty-config'] = fromUrl

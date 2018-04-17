@@ -4,6 +4,8 @@ if (typeof window !== 'undefined' && window.Buffer) {
   window.Buffer.prototype._isBuffer = true
 }
 
+const querystring = require('querystring')
+
 // jshint -W069
 function nativeRequire(modname) {
   // we use native require if available,
@@ -41,7 +43,6 @@ function SSBKeys() {
 
 console.warn('context requires ssb-keys')
 const ssbKeys = SSBKeys() 
-const querystring = require('querystring')
 
 function urlDecode(str) {
   try {
@@ -86,8 +87,9 @@ function _getContext() {
   }
   const fromStorage = localStorage['electroparty-config']
   if (fromStorage) {
-    console.log('ep: config from localStorage', ret)
     ret = urlDecode(fromStorage)
+    ret.keys = ret.keys || ssbKeys.loadOrCreateSync('electroparty-keys')
+    console.log('ep: config from localStorage', ret)
     return ret
   }
   throw new Error('ssb-electroparty did not find config data. D:')

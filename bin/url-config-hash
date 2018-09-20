@@ -6,7 +6,7 @@ const Child = require('child_process')
 const context = require('../context')
 
 const sbotConfig = JSON.parse(fs.readFileSync('config'))
-const manifest = JSON.parse(fs.readFileSync(`${process.env.HOME}/.${sbotConfig.appName}/manifest.json`))
+const manifest = JSON.parse(fs.readFileSync( (sbotConfig.path || `${process.env.HOME}/.${sbotConfig.appName}`) + '/manifest.json'))
 const ips = require('../get-ips')()
 const keys = null
 
